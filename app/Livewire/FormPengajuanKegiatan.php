@@ -28,7 +28,7 @@ class FormPengajuanKegiatan extends Component
             $idTerpilih = array_column($this->anggotaTerpilih, 'id');
             $idTerpilih[] = auth()->id(); // Masukkan ID sendiri agar tidak muncul
 
-            $this->hasilPencarian = User::role('Dosen Biasa')
+            $this->hasilPencarian = User::role('Dosen Program Studi')
                 ->whereNotIn('id', $idTerpilih)
                 ->where('name', 'like', '%' . $this->keywordDosen . '%')
                 ->take(5)

@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
         // 1. Membuat Daftar Peran (Roles) Sesuai Kebutuhan Kampus
         $roles = [
             'Super Admin',
-            'Dosen Biasa',
+            'Dosen Program Studi',
             'Ketua Program Studi',
             'Direktur',
             'Wakil Direktur Bid. Akademik',
@@ -45,7 +45,7 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('ImipasPrima2026!'),
         ]);
         
-        $dosen1->assignRole('Dosen Biasa');
+        $dosen1->assignRole('Dosen Program Studi');
 
         // Membuat Akun Dosen tambahan untuk Uji Coba Form
         $dosen2 = User::create([
@@ -54,7 +54,7 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('ImipasPrima2026!'),
         ]);
         
-        $dosen2->assignRole('Dosen Biasa');
+        $dosen2->assignRole('Dosen Program Studi');
 
         // Membuat Akun Kaprodi untuk Uji Coba Approval
         $kaprodi = User::create([
