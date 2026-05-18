@@ -13,7 +13,6 @@
             <div class="absolute left-0 top-1/2 transform -translate-y-1/2 w-full h-1 bg-gray-200 dark:bg-gray-700"></div>
             
             @php
-                // Logika Sederhana Penentuan Tahapan
                 $tahap = 1;
                 if(in_array($kegiatan->status, ['pending_tu'])) $tahap = 2;
                 if(in_array($kegiatan->status, ['active'])) $tahap = 3;
@@ -41,20 +40,20 @@
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         
-        <div class="md:col-span-2 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-            <div class="flex justify-between items-start mb-4">
+        <div class="md:col-span-2 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md space-y-6">
+            <div class="flex justify-between items-start">
                 <h2 class="text-2xl font-bold text-gray-800 dark:text-white">{{ $kegiatan->title }}</h2>
-                <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-bold">{{ strtoupper($kegiatan->type) }}</span>
+                <span class="px-3 py-1 bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300 rounded-full text-xs font-bold">{{ strtoupper($kegiatan->type) }}</span>
             </div>
             
-            <div class="grid grid-cols-2 gap-4 text-sm mt-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm pt-4 border-t border-gray-100 dark:border-gray-700">
                 <div>
                     <p class="text-gray-500 dark:text-gray-400">Target Luaran</p>
                     <p class="font-semibold text-gray-900 dark:text-white">{{ $kegiatan->target_output }}</p>
                 </div>
                 <div>
-                    <p class="text-gray-500 dark:text-gray-400">Lokasi / Mitra</p>
-                    <p class="font-semibold text-gray-900 dark:text-white">{{ $kegiatan->location_or_target }}</p>
+                    <p class="text-gray-500 dark:text-gray-400">Mitra Sasaran</p>
+                    <p class="font-semibold text-gray-900 dark:text-white">{{ $kegiatan->partner ?? '-' }}</p>
                 </div>
                 <div>
                     <p class="text-gray-500 dark:text-gray-400">Waktu Pelaksanaan</p>
@@ -68,6 +67,23 @@
                 </div>
             </div>
 
+            <div class="pt-4 border-t border-gray-100 dark:border-gray-700 space-y-3">
+                <div>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm">Alamat Lokasi Kegiatan</p>
+                    <p class="font-semibold text-gray-900 dark:text-white text-sm">{{ $kegiatan->location_or_target }}</p>
+                </div>
+                @if($kegiatan->latitude && $kegiatan->longitude)
+                    <div wire:ignore>
+                        <div id="map-view" class="w-full h-48 rounded-md border border-gray-200 dark:border-gray-700 z-0"></div>
+                    </div>
+                @endif
+            </div>
+
+            <div class="border-t border-gray-100 dark:border-gray-700 pt-4">
+                <p class="text-gray-500 dark:text-gray-400 text-sm mb-1">Deskripsi Kegiatan</p>
+                <p class="text-gray-800 dark:text-gray-200 text-sm leading-relaxed">{{ $kegiatan->description }}</p>
+            </div>
+            
             <div class="mt-8 border-t border-gray-200 dark:border-gray-700 pt-6">
                 <h3 class="text-md font-bold text-gray-800 dark:text-white mb-4">Susunan Tim Kegiatan</h3>
                 
@@ -77,12 +93,10 @@
                             <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-700 dark:text-blue-300 font-bold text-lg shadow-sm">
                                 {{ strtoupper(substr($member->user->name, 0, 1)) }}
                             </div>
-                            
                             <div class="ml-3 flex-1 overflow-hidden">
                                 <p class="text-sm font-bold text-gray-900 dark:text-white truncate">{{ $member->user->name }}</p>
                                 <p class="text-xs text-gray-500 dark:text-gray-400 capitalize">{{ $member->role }}</p>
                             </div>
-                            
                             <div class="text-right ml-2 flex-shrink-0">
                                 @if($member->status == 'accepted')
                                     <span class="px-2 py-1 bg-green-100 text-green-800 text-[10px] font-bold rounded-full border border-green-200">Bergabung</span>
@@ -97,13 +111,8 @@
                 </div>
             </div>
 
-            <div class="mt-6 border-t border-gray-200 dark:border-gray-700 pt-4">
-                <p class="text-gray-500 dark:text-gray-400 text-sm mb-1">Deskripsi Kegiatan</p>
-                <p class="text-gray-800 dark:text-gray-200 text-sm">{{ $kegiatan->description }}</p>
-            </div>
-
             @if(auth()->id() == $kegiatan->user_id)
-                <div class="mt-8 flex space-x-3">
+                <div class="mt-8 flex space-x-3 pt-6 border-t border-gray-200 dark:border-gray-700">
                     @if(in_array($kegiatan->status, ['draft', 'pending_kaprodi', 'perlu_revisi']))
                         <button wire:click="hapusLangsung" wire:confirm="Yakin ingin menghapus pengajuan ini secara permanen?" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded text-sm font-bold shadow transition">
                             Hapus Permanen
@@ -119,9 +128,8 @@
                     Anda tergabung sebagai <strong>Anggota Tim</strong> dalam kegiatan ini. Segala perubahan dokumen hanya dapat dilakukan oleh Ketua Tim.
                 </div>
             @endif
-        </div>
 
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+        </div> <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md h-fit">
             <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-6">Riwayat Aktivitas</h3>
             
             <div class="relative border-l border-gray-200 dark:border-gray-700 ml-3">
@@ -140,9 +148,7 @@
             </div>
         </div>
 
-    </div>
-
-    @if($showModalBatal)
+    </div> @if($showModalBatal)
     <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md mx-4 p-6">
             <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Pengajuan Pembatalan Kegiatan</h3>
@@ -157,5 +163,31 @@
             </div>
         </div>
     </div>
+    @endif
+
+    @if($kegiatan->latitude && $kegiatan->longitude)
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+        document.addEventListener('livewire:navigated', () => {
+            const mapElement = document.getElementById('map-view');
+            if (!mapElement) return;
+
+            const lat = {{ $kegiatan->latitude }};
+            const lng = {{ $kegiatan->longitude }};
+            
+            // Kunci koordinat dan matikan fitur drag/scroll agar peta murni read-only
+            const map = L.map('map-view', {
+                center: [lat, lng],
+                zoom: 13,
+                dragging: false,
+                scrollWheelZoom: false,
+                zoomControl: true
+            });
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+            L.marker([lat, lng]).addTo(map).bindPopup("Lokasi Kegiatan").openPopup();
+        });
+    </script>
     @endif
 </div>

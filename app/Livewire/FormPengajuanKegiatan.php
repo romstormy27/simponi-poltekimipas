@@ -12,7 +12,8 @@ use App\Notifications\SistemNotifikasi;
 class FormPengajuanKegiatan extends Component
 {
     // Variabel Form Lama
-    public $title, $type, $target_output, $description, $location_or_target, $start_date, $end_date;
+    // Pastikan baris ini persis seperti ini:
+    public $title, $type, $target_output, $description, $location_or_target, $start_date, $end_date, $partner, $latitude, $longitude;
     
     // Variabel Form Baru (Untuk Pencarian Tim)
     public $keywordDosen = '';
@@ -57,9 +58,12 @@ class FormPengajuanKegiatan extends Component
             'type' => 'required|in:penelitian,pengabdian',
             'target_output' => 'required|string',
             'description' => 'required',
-            'location_or_target' => 'required|string',
+            'location_or_target' => 'required|string', // Alamat Lokasi
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
+            'partner' => 'nullable|string|max:255', // Opsional
+            'latitude' => 'nullable|string',
+            'longitude' => 'nullable|string',
         ]);
 
         $kegiatan = Activity::create([
@@ -69,19 +73,19 @@ class FormPengajuanKegiatan extends Component
             'target_output' => $this->target_output,
             'description' => $this->description,
             'location_or_target' => $this->location_or_target,
-            'start_date' => $this->start_date,
-            'end_date' => $this->end_date,
+            'partner' => $this->partner,
+            'latitude' => $this->latitude,
+            'longitude' => $this->longitude,
             'status' => 'pending_kaprodi',
         ]);
 
+        // ... (Logika simpan history dan anggota tim di bawahnya biarkan tetap sama) ...
         ActivityHistory::create([
             'activity_id' => $kegiatan->id,
             'status' => 'Pengajuan Baru',
             'description' => 'Dosen membuat pengajuan awal dan mengirimkannya ke Kaprodi.'
         ]);
 
-        // --- SIMPAN SUSUNAN TIM ---
-        // 1. Simpan Pembuat sebagai Ketua (Otomatis Accepted)
         ActivityMember::create([
             'activity_id' => $kegiatan->id,
             'user_id' => auth()->id(),
@@ -89,7 +93,6 @@ class FormPengajuanKegiatan extends Component
             'status' => 'accepted'
         ]);
 
-        // 2. Simpan Anggota Terpilih (Status Pending Menunggu Konfirmasi)
         foreach ($this->anggotaTerpilih as $anggota) {
             ActivityMember::create([
                 'activity_id' => $kegiatan->id,
@@ -97,20 +100,27 @@ class FormPengajuanKegiatan extends Component
                 'role' => 'anggota',
                 'status' => 'pending'
             ]);
-
-            // TAMBAHKAN INI: Kirim notifikasi ke dosen yang diundang
+            
             $userAnggota = User::find($anggota['id']);
-            $userAnggota->notify(new SistemNotifikasi(
+            $userAnggota->notify(new \App\Notifications\SistemNotifikasi(
                 'Undangan Kolaborasi Tim',
                 auth()->user()->name . ' mengundang Anda bergabung dalam kegiatan: "' . $this->title . '"',
                 route('pengajuan.riwayat')
             ));
         }
-        
-        // 1. Tetap buat pesan sukses (akan terbawa ke halaman riwayat)
+
         session()->flash('sukses', 'Pengajuan berhasil! Undangan telah dikirim ke anggota tim.');
-        
-        // 2. Langsung arahkan dosen ke halaman list/riwayat kegiatan
+
+        // Kirim Notifikasi ke Kaprodi
+        $kaprodiUsers = \App\Models\User::role('Ketua Program Studi')->get();
+        foreach ($kaprodiUsers as $kaprodi) {
+            $kaprodi->notify(new \App\Notifications\SistemNotifikasi(
+                'Pengajuan Kegiatan Baru 📝',
+                auth()->user()->name . ' telah mengajukan kegiatan baru: "' . $this->title . '". Menunggu persetujuan Anda.',
+                route('approval.index')
+            ));
+        }
+
         return redirect()->route('pengajuan.riwayat');
     }
 

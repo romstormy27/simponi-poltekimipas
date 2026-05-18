@@ -30,12 +30,77 @@
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Target Luaran</label>
                 <input type="text" wire:model="target_output" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-900 dark:border-gray-700 dark:text-white" placeholder="Contoh: Jurnal Sinta 4">
+                @error('target_output') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Lokasi / Mitra Sasaran</label>
-                <input type="text" wire:model="location_or_target" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-900 dark:border-gray-700 dark:text-white" placeholder="Contoh: Kanim Bogor">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Mitra Sasaran (Jika Ada)</label>
+                <input type="text" wire:model="partner" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-900 dark:border-gray-700 dark:text-white" placeholder="Contoh: Kanim Kelas I Tangerang / Masyarakat Desa">
             </div>
         </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="md:col-span-1 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Alamat / Lokasi Kegiatan</label>
+                    <input type="text" wire:model="location_or_target" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-900 dark:border-gray-700 dark:text-white" placeholder="Contoh: Jl. Liang Lahat No. 45">
+                    @error('location_or_target') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Latitude</label>
+                    <input type="text" wire:model="latitude" readonly class="mt-1 block w-full rounded-md border-gray-300 bg-gray-100 shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white cursor-not-allowed" placeholder="Klik pada peta">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Longitude</label>
+                    <input type="text" wire:model="longitude" readonly class="mt-1 block w-full rounded-md border-gray-300 bg-gray-100 shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white cursor-not-allowed" placeholder="Klik pada peta">
+                </div>
+            </div>
+            
+            <div class="md:col-span-2" wire:ignore>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Pilih Titik Lokasi pada Peta</label>
+                <div id="map" class="w-full h-64 rounded-md border border-gray-300 dark:border-gray-700 z-0"></div>
+            </div>
+        </div>
+
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+        
+        <script>
+            document.addEventListener('livewire:navigated', () => {
+                const mapContainer = document.getElementById('map');
+                if (!mapContainer) return;
+
+                // 1. Inisialisasi Peta (Default pusat ke area Jabodetabek/Indonesia)
+                const defaultLat = -6.229722;
+                const defaultLng = 106.653889;
+                const map = L.map('map').setView([defaultLat, defaultLng], 10);
+
+                // 2. Pasang Layer Peta OpenStreetMap
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors'
+                }).addTo(map);
+
+                // 3. Buat Penanda (Marker) yang bisa digeser
+                let marker = L.marker([defaultLat, defaultLng], { draggable: true }).addTo(map);
+
+                function updateCoordinates(lat, lng) {
+                    marker.setLatLng([lat, lng]);
+                    // Kirim koordinat langsung ke variabel Livewire backend
+                    @this.set('latitude', lat.toFixed(7));
+                    @this.set('longitude', lng.toFixed(7));
+                }
+
+                // Jika Peta diklik
+                map.on('click', function(e) {
+                    updateCoordinates(e.latlng.lat, e.latlng.lng);
+                });
+
+                // Jika Penanda digeser manual
+                marker.on('dragend', function(e) {
+                    const position = marker.getLatLng();
+                    updateCoordinates(position.lat, position.lng);
+                });
+            });
+        </script>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>

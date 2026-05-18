@@ -22,6 +22,16 @@ class ApprovalKaprodi extends Component
         ActivityHistory::create(['activity_id' => $id, 'status' => 'Disetujui Kaprodi', 'description' => 'Pengajuan disetujui, diteruskan ke TU untuk penomoran surat.']);
         
         session()->flash('sukses', 'Kegiatan disetujui dan diteruskan ke TU.');
+
+        // Kirim Notifikasi ke Tata Usaha (TU)
+        $tuUsers = \App\Models\User::role('Kepala Sub Bagian TU')->get();
+        foreach ($tuUsers as $tu) {
+            $tu->notify(new \App\Notifications\SistemNotifikasi(
+                'Penomoran Surat Menunggu 📇',
+                'Kaprodi telah menyetujui kegiatan "' . $kegiatan->title . '". Mohon segera terbitkan Surat Tugas dan Izin.',
+                route('tu.index')
+            ));
+        }
     }
 
     public function bukaModalTolak($id) { $this->idKegiatanTolak = $id; $this->alasan_penolakan = ''; $this->showModalTolak = true; }

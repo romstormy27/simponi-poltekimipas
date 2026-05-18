@@ -59,6 +59,17 @@ class FormRevisiKegiatan extends Component
         ]);
 
         session()->flash('sukses', 'Revisi berhasil dikirim kembali ke Kaprodi.');
+
+        // Kirim Notifikasi ke Kaprodi bahwa revisi sudah selesai
+        $kaprodiUsers = \App\Models\User::role('Ketua Program Studi')->get();
+        foreach ($kaprodiUsers as $kaprodi) {
+            $kaprodi->notify(new \App\Notifications\SistemNotifikasi(
+                'Revisi Dikembalikan 🔄',
+                auth()->user()->name . ' telah mengirimkan kembali revisi dokumen untuk kegiatan: "' . $this->title . '".',
+                route('approval.index')
+            ));
+        }
+
         return redirect()->route('pengajuan.riwayat'); // Lempar balik ke daftar
     }
 

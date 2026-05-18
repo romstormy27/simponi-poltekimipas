@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'welcome');
+Route::redirect('/', '/login');
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
@@ -38,6 +38,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/pengajuan/{id}/detail', \App\Livewire\DetailKegiatanDosen::class)->name('pengajuan.detail');
 
     Route::get('/notifikasi', \App\Livewire\HalamanNotifikasi::class)->name('notifikasi.index');
+
+    Route::get('/approval/{id}/detail', \App\Livewire\DetailApprovalKaprodi::class)->name('approval.detail');
 });
 
 require __DIR__.'/auth.php';
