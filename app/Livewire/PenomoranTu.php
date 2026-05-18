@@ -43,6 +43,8 @@ class PenomoranTu extends Component
         )); 
         
         session()->flash('sukses', 'Nomor surat berhasil disimpan! Kegiatan sekarang berstatus Aktif.');
+
+        \App\Models\AuditLog::catat('Administrasi TU', "Menerbitkan surat tugas nomor {$kegiatan->document_number_task} dan surat izin nomor {$kegiatan->document_number_permit} untuk kegiatan ID-{$kegiatan->id}");
     }
 
     public function render()

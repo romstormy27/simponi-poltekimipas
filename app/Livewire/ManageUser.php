@@ -73,6 +73,9 @@ class ManageUser extends Component
         $this->email = $user->email;
         $this->roleSelected = $user->getRoleNames()->first();
         $this->bukaModal();
+
+        $targetUser = User::find($id);
+        \App\Models\AuditLog::catat('Manajemen User', 'Superadmin melakukan edit user: ' . $targetUser->name);
     }
 
     public function hapusUser($id)
@@ -82,6 +85,7 @@ class ManageUser extends Component
             return;
         }
         User::find($id)->delete();
+        \App\Models\AuditLog::catat('Manajemen User', 'Menghapus permanen pengguna dengan ID: ' . $id);
         session()->flash('sukses', 'User berhasil dihapus.');
     }
 
@@ -90,6 +94,10 @@ class ManageUser extends Component
         if ($id === auth()->id()) return;
         session(['original_superadmin_id' => auth()->id()]);
         Auth::loginUsingId($id);
+
+        $targetUser = User::find($id);
+        \App\Models\AuditLog::catat('Sistem Keamanan', 'Superadmin melakukan Impersonate (Login Sebagai) user: ' . $targetUser->name);
+
         return redirect()->route('dashboard');
     }
 
@@ -130,6 +138,8 @@ class ManageUser extends Component
         $totalDihapus = count($idsToDelete);
         $this->reset(['selectedUsers', 'selectAll']);
         session()->flash('sukses', "Berhasil menghapus {$totalDihapus} pengguna sekaligus!");
+
+        \App\Models\AuditLog::catat('Manajemen User', "Menghapus massal {$totalDihapus} akun pengguna.");
     }
 
     public function bulkChangeRole()
@@ -149,6 +159,8 @@ class ManageUser extends Component
         $totalDiubah = $users->count();
         $this->reset(['selectedUsers', 'selectAll', 'bulkRoleTarget']);
         session()->flash('sukses', "Berhasil memperbarui peran {$totalDiubah} pengguna sekaligus!");
+
+        \App\Models\AuditLog::catat('Manajemen User', "Mengubah peran secara massal untuk {$totalDiubah} pengguna menjadi {$this->bulkRoleTarget}.");
     }
 
     // ==========================================
@@ -214,6 +226,8 @@ class ManageUser extends Component
         $this->tutupModalImport();
 
         session()->flash('sukses', "Proses Impor Selesai! {$suksesCount} User berhasil didaftarkan. ({$skipCount} Baris dilewati karena duplikasi/tidak valid).");
+
+        \App\Models\AuditLog::catat('Manajemen User', "Mengimpor data CSV. Sukses: {$suksesCount} user, Dilewati: {$skipCount} baris.");
     }
 
     public function render()

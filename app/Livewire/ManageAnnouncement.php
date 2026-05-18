@@ -48,9 +48,13 @@ class ManageAnnouncement extends Component
         if ($this->isEdit) {
             Announcement::find($this->announcementId)->update($data);
             session()->flash('sukses', 'Pengumuman berhasil diperbarui!');
+
+            \App\Models\AuditLog::catat('Pengumuman', 'Mengedit pengumuman dengan judul: ' . $this->title);
         } else {
             Announcement::create($data);
             session()->flash('sukses', 'Pengumuman baru berhasil disiarkan!');
+
+            \App\Models\AuditLog::catat('Pengumuman', 'Menerbitkan pengumuman baru berjudul: ' . $this->title);
         }
 
         $this->tutupModal();
@@ -79,7 +83,15 @@ class ManageAnnouncement extends Component
 
     public function hapusPengumuman($id)
     {
-        Announcement::find($id)->delete();
+        // 1. Tangkap dulu datanya selagi masih ada di database
+        $item = Announcement::findOrFail($id);
+        
+        // 2. Catat ke Audit Log menggunakan judul yang baru saja ditangkap
+        \App\Models\AuditLog::catat('Pengumuman', 'Menghapus pengumuman berjudul: ' . $item->title);
+        
+        // 3. Setelah aman dicatat, baru kita lenyapkan dari database
+        $item->delete();
+        
         session()->flash('sukses', 'Pengumuman berhasil dihapus dari sistem.');
     }
 

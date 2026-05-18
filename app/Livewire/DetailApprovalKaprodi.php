@@ -34,6 +34,9 @@ class DetailApprovalKaprodi extends Component
                 route('tu.index')
             ));
         }
+
+        \App\Models\AuditLog::catat('Persetujuan Dokumen', "Kaprodi menyetujui usulan kegiatan ID-{$kegiatan->id} berjudul: {$kegiatan->title}");
+
         return redirect()->route('approval.index');
     }
 
@@ -44,6 +47,9 @@ class DetailApprovalKaprodi extends Component
         ActivityHistory::create(['activity_id' => $this->kegiatan->id, 'status' => 'Dikembalikan (Revisi)', 'description' => 'Kaprodi meminta revisi melalui peninjauan detail: ' . $this->alasan_penolakan]);
         
         session()->flash('error', 'Kegiatan dikembalikan ke dosen.');
+
+        \App\Models\AuditLog::catat('Persetujuan Dokumen', "Kaprodi mengembalikan usulan kegiatan ID-{$this->kegiatan->id} dengan catatan revisi.");
+
         return redirect()->route('approval.index');
     }
 

@@ -54,6 +54,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/super/users', \App\Livewire\ManageUser::class)->name('admin.users');
 
     Route::get('/super/announcements', \App\Livewire\ManageAnnouncement::class)->name('admin.announcements');
+
+    Route::get('/super/audit-trail', \App\Livewire\AuditTrail::class)->name('admin.audit');
 });
 
 require __DIR__.'/auth.php';
