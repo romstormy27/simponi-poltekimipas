@@ -68,5 +68,19 @@
         </a>
         @endrole
 
+        @role('Super Admin')
+        <div class="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <p class="px-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Konsol Admin</p>
+            <a href="{{ route('admin.users') }}" class="flex items-center px-3 py-2.5 text-purple-700 hover:bg-purple-50 dark:text-purple-400 dark:hover:bg-purple-950/20 rounded-lg transition {{ request()->routeIs('admin.users') ? 'bg-purple-50 dark:bg-purple-950/30 font-bold' : '' }}">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                <span class="font-medium">Manajemen User</span>
+            </a>
+            <a href="{{ route('admin.announcements') }}" class="flex items-center px-3 py-2.5 text-purple-700 hover:bg-purple-50 dark:text-purple-400 dark:hover:bg-purple-950/20 rounded-lg transition {{ request()->routeIs('admin.announcements') ? 'bg-purple-50 dark:bg-purple-950/30 font-bold' : '' }}">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
+                <span class="font-medium">Papan Pengumuman</span>
+            </a>
+        </div>
+        @endrole
+
     </nav>
 </aside>

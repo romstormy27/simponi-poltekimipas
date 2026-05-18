@@ -25,6 +25,71 @@
                     </div>
                 </div>
             </div>
+
+            @php
+                $userRoles = auth()->user()->getRoleNames()->toArray();
+                
+                $pengumumanAktif = \App\Models\Announcement::where('is_active', true)
+                    ->where(function($query) use ($userRoles) {
+                        $query->whereNull('target_role')
+                              ->orWhereIn('target_role', $userRoles);
+                    })
+                    ->latest()
+                    ->get();
+            @endphp
+
+            @if($pengumumanAktif->count() > 0)
+                <div class="mb-8 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                    
+                    <div class="flex items-center space-x-2 mb-4 pb-2 border-b border-gray-100 dark:border-gray-700">
+                        <div class="relative flex h-3 w-3">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-3 w-3 bg-purple-600"></span>
+                        </div>
+                        <h3 class="text-sm font-extrabold text-purple-900 dark:text-purple-400 uppercase tracking-wider">
+                            📢 Papan Pengumuman (Wajib Baca!!!)
+                        </h3>
+                    </div>
+
+                    <div class="space-y-3">
+                        @foreach($pengumumanAktif as $annif)
+                            <div class="p-4 rounded-lg border flex items-start transition duration-300
+                                {{ $annif->type == 'danger' ? 'bg-red-50/70 border-red-200 text-red-900 dark:bg-red-950/20 dark:border-red-900 dark:text-red-300' : '' }}
+                                {{ $annif->type == 'warning' ? 'bg-yellow-50/70 border-yellow-200 text-yellow-900 dark:bg-yellow-950/20 dark:border-yellow-900 dark:text-yellow-300' : '' }}
+                                {{ $annif->type == 'success' ? 'bg-green-50/70 border-green-200 text-green-900 dark:bg-green-950/20 dark:border-green-900 dark:text-green-300' : '' }}
+                                {{ $annif->type == 'info' ? 'bg-blue-50/70 border-blue-200 text-blue-900 dark:bg-blue-950/20 dark:border-blue-900 dark:text-blue-300' : '' }}
+                            ">
+                                <div class="flex-shrink-0 mr-3">
+                                    <span class="px-2.5 py-0.5 rounded text-[10px] font-extrabold uppercase tracking-wider shadow-sm block text-center min-w-[110px]
+                                        {{ $annif->type == 'danger' ? 'bg-red-600 text-white' : '' }}
+                                        {{ $annif->type == 'warning' ? 'bg-yellow-500 text-white' : '' }}
+                                        {{ $annif->type == 'success' ? 'bg-emerald-600 text-white' : '' }}
+                                        {{ $annif->type == 'info' ? 'bg-blue-600 text-white' : '' }}
+                                    ">
+                                        @if($annif->type == 'info')
+                                            INFORMASI<br>UMUM
+                                        @elseif($annif->type == 'warning')
+                                            PENTING
+                                        @elseif($annif->type == 'danger')
+                                            SANGAT<br>PENTING
+                                        @elseif($annif->type == 'success')
+                                            INFORMASI<br>LAINNYA
+                                        @endif
+                                    </span>
+                                </div>
+                                
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between gap-4">
+                                        <h4 class="text-sm font-bold tracking-tight text-gray-900 dark:text-white">{{ $annif->title }}</h4>
+                                        <span class="text-[10px] text-gray-400 dark:text-gray-500 font-medium whitespace-nowrap">{{ $annif->created_at->diffForHumans() }}</span>
+                                    </div>
+                                    <p class="text-xs mt-1.5 text-gray-700 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-line">{{ $annif->content }}</p>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
             
             @role('Dosen Program Studi')
                 <div class="mb-4 text-gray-800 dark:text-gray-200">

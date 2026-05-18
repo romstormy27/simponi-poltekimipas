@@ -21,6 +21,15 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased">
+
+        @if(session()->has('original_superadmin_id'))
+            <div class="bg-gradient-to-r from-red-600 to-red-700 text-white text-center py-2 px-4 text-sm font-bold shadow-lg flex justify-center items-center space-x-2 relative z-50 animate-bounce">
+                <span>🛡️ Anda saat ini sedang dalam mode penyamaran sebagai: <strong class="underline">{{ auth()->user()->name }}</strong></span>
+                <a href="{{ route('leave-impersonate') }}" class="ml-4 bg-white text-red-700 hover:bg-gray-100 px-3 py-1 rounded-full text-xs font-extrabold shadow-sm transition">
+                    🚪 Akhiri Penyamaran &rarr;
+                </a>
+            </div>
+        @endif
         
         <div class="flex h-screen bg-gray-100 dark:bg-gray-900 overflow-hidden">
             

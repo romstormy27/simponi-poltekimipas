@@ -40,6 +40,20 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/notifikasi', \App\Livewire\HalamanNotifikasi::class)->name('notifikasi.index');
 
     Route::get('/approval/{id}/detail', \App\Livewire\DetailApprovalKaprodi::class)->name('approval.detail');
+
+    Route::get('/leave-impersonate', function() {
+        if (session()->has('original_superadmin_id')) {
+            // Ambil ID admin asli, kembalikan login ke dia, lalu hapus session penyamaran
+            Illuminate\Support\Facades\Auth::loginUsingId(session('original_superadmin_id'));
+            session()->forget('original_superadmin_id');
+            return redirect()->route('admin.users'); // Kembali ke panel admin
+        }
+        return redirect('/');
+    })->name('leave-impersonate');
+
+    Route::get('/super/users', \App\Livewire\ManageUser::class)->name('admin.users');
+
+    Route::get('/super/announcements', \App\Livewire\ManageAnnouncement::class)->name('admin.announcements');
 });
 
 require __DIR__.'/auth.php';
