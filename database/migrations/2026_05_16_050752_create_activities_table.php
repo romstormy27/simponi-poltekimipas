@@ -22,6 +22,10 @@ return new class extends Migration
         
         // --- MODIFIKASI DAN TAMBAHKAN KOLOM BERIKUT ---
         $table->string('location_or_target'); // Sekarang murni untuk Alamat/Lokasi Kegiatan
+
+        $table->date('start_date'); 
+        $table->date('end_date');
+
         $table->string('partner')->nullable(); // Mitra Sasaran (Jika ada)
         $table->string('latitude')->nullable(); // Koordinat Latitude
         $table->string('longitude')->nullable(); // Koordinat Longitude

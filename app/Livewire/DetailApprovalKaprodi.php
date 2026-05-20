@@ -16,6 +16,14 @@ class DetailApprovalKaprodi extends Component
     {
         // Memastikan dokumen yang ditinjau berada di bawah koridor wewenangnya
         $this->kegiatan = Activity::with(['user', 'members.user'])->whereIn('status', ['pending_kaprodi', 'pending_cancellation'])->findOrFail($id);
+
+        // 🛡️ SISTEM KEAMANAN: Cek apakah Prodi dokumen SAMA dengan Prodi Kaprodi
+        $prodiDokumen = $this->kegiatan->user->program_studi;
+        $prodiKaprodi = auth()->user()->program_studi;
+
+        if ($prodiDokumen !== $prodiKaprodi) {
+            abort(403, "AKSES DITOLAK: Anda tidak berwenang meninjau dokumen dari Program Studi {$prodiDokumen}.");
+        }
     }
 
     public function setujui()
@@ -35,7 +43,7 @@ class DetailApprovalKaprodi extends Component
             ));
         }
 
-        \App\Models\AuditLog::catat('Persetujuan Dokumen', "Kaprodi menyetujui usulan kegiatan ID-{$kegiatan->id} berjudul: {$kegiatan->title}");
+        \App\Models\AuditLog::catat('Persetujuan Dokumen', "Kaprodi menyetujui usulan kegiatan ID-{$this->kegiatan->id} berjudul: {$this->kegiatan->title}");
 
         return redirect()->route('approval.index');
     }

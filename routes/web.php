@@ -56,6 +56,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/super/announcements', \App\Livewire\ManageAnnouncement::class)->name('admin.announcements');
 
     Route::get('/super/audit-trail', \App\Livewire\AuditTrail::class)->name('admin.audit');
+
+    Route::get('/management/templates', \App\Livewire\ManageTemplate::class)->name('admin.templates');
+
+    // Rute Akses Generate PDF
+    Route::get('/dokumen/{id}/{type}/preview', [\App\Http\Controllers\DocumentController::class, 'generatePDF'])->name('dokumen.preview')->defaults('action', 'preview');
+    Route::get('/dokumen/{id}/{type}/download', [\App\Http\Controllers\DocumentController::class, 'generatePDF'])->name('dokumen.download')->defaults('action', 'download');
+
+    // Rute Verifikasi QR Code (Bisa diakses publik tanpa login)
+    Route::get('/verifikasi-dokumen/{id}/{type}', [\App\Http\Controllers\DocumentController::class, 'verifikasi'])->name('dokumen.verifikasi')->withoutMiddleware('auth');
 });
 
 require __DIR__.'/auth.php';

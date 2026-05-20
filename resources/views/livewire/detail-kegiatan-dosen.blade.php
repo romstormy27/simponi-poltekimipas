@@ -67,6 +67,51 @@
                 </div>
             </div>
 
+            @if($kegiatan->document_number_task)
+            <div class="mt-8 bg-indigo-50 border border-indigo-100 rounded-xl p-6 dark:bg-indigo-900/20 dark:border-indigo-800">
+                <h4 class="text-sm font-extrabold text-indigo-900 dark:text-indigo-300 uppercase tracking-wider mb-4 flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    Dokumen Legalitas Kegiatan
+                </h4>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-center gap-4">
+                        <div>
+                            <p class="text-sm font-bold text-gray-800 dark:text-white">Surat Tugas</p>
+                            <p class="text-[10px] text-gray-500 font-mono mt-0.5">No: {{ $kegiatan->document_number_task }}</p>
+                        </div>
+                        <div class="flex space-x-2 w-full sm:w-auto">
+                            <a href="{{ route('dokumen.preview', ['id' => $kegiatan->id, 'type' => 'surat_tugas']) }}" target="_blank" class="flex-1 sm:flex-none text-center px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold rounded transition">
+                                👁️ Pratinjau
+                            </a>
+                            <a href="{{ route('dokumen.download', ['id' => $kegiatan->id, 'type' => 'surat_tugas']) }}" class="flex-1 sm:flex-none text-center px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded shadow-sm transition">
+                                📥 Unduh PDF
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-center gap-4">
+                        <div>
+                            <p class="text-sm font-bold text-gray-800 dark:text-white">Surat Izin</p>
+                            <p class="text-[10px] text-gray-500 font-mono mt-0.5">No: {{ $kegiatan->document_number_permit }}</p>
+                        </div>
+                        <div class="flex space-x-2 w-full sm:w-auto">
+                            <a href="{{ route('dokumen.preview', ['id' => $kegiatan->id, 'type' => 'surat_izin']) }}" target="_blank" class="flex-1 sm:flex-none text-center px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold rounded transition">
+                                👁️ Pratinjau
+                            </a>
+                            <a href="{{ route('dokumen.download', ['id' => $kegiatan->id, 'type' => 'surat_izin']) }}" class="flex-1 sm:flex-none text-center px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold rounded shadow-sm transition">
+                                📥 Unduh PDF
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @else
+            <div class="mt-8 p-4 bg-gray-50 border border-dashed border-gray-300 rounded-lg text-center dark:bg-gray-800/50 dark:border-gray-700">
+                <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">⏳ Dokumen fisik (Surat Tugas & Surat Izin) belum diterbitkan oleh Tata Usaha.</p>
+            </div>
+            @endif
+
             <div class="pt-4 border-t border-gray-100 dark:border-gray-700 space-y-3">
                 <div>
                     <p class="text-gray-500 dark:text-gray-400 text-sm">Alamat Lokasi Kegiatan</p>

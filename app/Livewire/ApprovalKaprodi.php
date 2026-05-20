@@ -136,7 +136,13 @@ class ApprovalKaprodi extends Component
 
     public function render()
     {
+        // Hanya ambil antrean dari dosen yang Prodi-nya SAMA dengan Prodi Kaprodi yang sedang login
+        $prodiKaprodi = auth()->user()->program_studi;
+
         $antrean = Activity::with('user')
+            ->whereHas('user', function ($query) use ($prodiKaprodi) {
+                $query->where('program_studi', $prodiKaprodi);
+            })
             ->whereIn('status', ['pending_kaprodi', 'pending_cancellation'])
             ->latest()
             ->get();

@@ -16,12 +16,21 @@
                         <h2 class="text-2xl font-extrabold text-gray-900 dark:text-white tracking-tight">
                             Selamat Datang, {{ auth()->user()->name }}! 👋
                         </h2>
-                        <p class="text-md text-gray-600 dark:text-gray-400 mt-2">
-                            Saat ini Anda login sebagai 
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
-                                {{ auth()->user()->getRoleNames()->first() ?? 'Pengguna Sistem' }}
-                            </span>
-                        </p>
+                        <div class="mt-4 p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg border border-indigo-100 dark:border-indigo-800 inline-block">
+                            <div class="flex items-center space-x-4 text-sm">
+                                <div>
+                                    <span class="block text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider font-bold">NIP / Username</span>
+                                    <span class="font-mono text-indigo-700 dark:text-indigo-300 font-bold">{{ auth()->user()->username ?? '-' }}</span>
+                                </div>
+                                
+                                @if(auth()->user()->program_studi)
+                                <div class="border-l border-indigo-200 dark:border-indigo-700 pl-4">
+                                    <span class="block text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider font-bold">Program Studi</span>
+                                    <span class="font-semibold text-gray-800 dark:text-gray-200">{{ auth()->user()->program_studi }}</span>
+                                </div>
+                                @endif
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

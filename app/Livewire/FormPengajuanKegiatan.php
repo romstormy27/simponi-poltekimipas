@@ -53,33 +53,28 @@ class FormPengajuanKegiatan extends Component
 
     public function simpanKegiatan()
     {
-        $this->validate([
+        // 1. Validasi sekaligus tangkap datanya ke dalam variabel $validatedData
+        $validatedData = $this->validate([
             'title' => 'required|string|max:255',
             'type' => 'required|in:penelitian,pengabdian',
             'target_output' => 'required|string',
             'description' => 'required',
-            'location_or_target' => 'required|string', // Alamat Lokasi
+            'location_or_target' => 'required|string',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
-            'partner' => 'nullable|string|max:255', // Opsional
+            'partner' => 'nullable|string|max:255',
             'latitude' => 'nullable|string',
             'longitude' => 'nullable|string',
         ]);
 
-        $kegiatan = Activity::create([
-            'user_id' => auth()->id(), 
-            'title' => $this->title,
-            'type' => $this->type,
-            'target_output' => $this->target_output,
-            'description' => $this->description,
-            'location_or_target' => $this->location_or_target,
-            'partner' => $this->partner,
-            'latitude' => $this->latitude,
-            'longitude' => $this->longitude,
-            'status' => 'pending_kaprodi',
-        ]);
+        // 2. Tambahkan data otomatis sistem (User ID & Status) ke dalam array tersebut
+        $validatedData['user_id'] = auth()->id();
+        $validatedData['status'] = 'pending_kaprodi';
 
-        // ... (Logika simpan history dan anggota tim di bawahnya biarkan tetap sama) ...
+        // 3. Simpan ke database DALAM SATU BARIS (Anti-Typo!)
+        $kegiatan = Activity::create($validatedData);
+
+        // --- (Bagian bawah ini biarkan sama seperti sebelumnya) ---
         ActivityHistory::create([
             'activity_id' => $kegiatan->id,
             'status' => 'Pengajuan Baru',
@@ -101,7 +96,7 @@ class FormPengajuanKegiatan extends Component
                 'status' => 'pending'
             ]);
             
-            $userAnggota = User::find($anggota['id']);
+            $userAnggota = \App\Models\User::find($anggota['id']);
             $userAnggota->notify(new \App\Notifications\SistemNotifikasi(
                 'Undangan Kolaborasi Tim',
                 auth()->user()->name . ' mengundang Anda bergabung dalam kegiatan: "' . $this->title . '"',
@@ -111,12 +106,15 @@ class FormPengajuanKegiatan extends Component
 
         session()->flash('sukses', 'Pengajuan berhasil! Undangan telah dikirim ke anggota tim.');
 
-        // Kirim Notifikasi ke Kaprodi
-        $kaprodiUsers = \App\Models\User::role('Ketua Program Studi')->get();
+        // Kirim Notifikasi HANYA ke Kaprodi di Program Studi yang sama dengan Dosen Pengusul
+        $kaprodiUsers = \App\Models\User::role('Ketua Program Studi')
+            ->where('program_studi', auth()->user()->program_studi)
+            ->get();
+            
         foreach ($kaprodiUsers as $kaprodi) {
             $kaprodi->notify(new \App\Notifications\SistemNotifikasi(
-                'Pengajuan Kegiatan Baru 📝',
-                auth()->user()->name . ' telah mengajukan kegiatan baru: "' . $this->title . '". Menunggu persetujuan Anda.',
+                'Pengajuan Baru: ' . auth()->user()->program_studi,
+                auth()->user()->name . ' telah mengajukan kegiatan baru: "' . $this->title . '".',
                 route('approval.index')
             ));
         }
