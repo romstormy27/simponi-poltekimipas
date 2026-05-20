@@ -195,26 +195,28 @@ class ManageUser extends Component
         $skipCount = 0;
 
         // Looping membaca baris data ke bawah
+        // Looping membaca baris data ke bawah
         while (($row = fgetcsv($file)) !== false) {
-            // Lewati jika kolom tidak lengkap (harus ada 4 kolom)
-            if (count($row) < 4) {
+            // 🟢 UBAH: Lewati jika kolom kurang dari 5 (karena program_studi opsional, minimal 5 kolom)
+            if (count($row) < 5) {
                 $skipCount++;
                 continue;
             }
 
             $csv_nama = trim($row[0]);
-            $csv_email = trim($row[1]);
-            $csv_role = trim($row[2]);
-            $csv_password = trim($row[3]);
+            $csv_username = trim($row[1]); // 🟢 TAMBAHAN (NIP)
+            $csv_email = trim($row[2]);
+            $csv_role = trim($row[3]);
+            $csv_password = trim($row[4]);
+            $csv_prodi = isset($row[5]) ? trim($row[5]) : null; // 🟢 TAMBAHAN (Prodi)
 
-            // VALIDASI INDUSTRI: Cek duplikasi email agar database tidak crash
-            $exists = User::where('email', $csv_email)->exists();
-            if ($exists || empty($csv_nama) || empty($csv_email)) {
+            // VALIDASI INDUSTRI: Cek duplikasi email atau username
+            $exists = User::where('email', $csv_email)->orWhere('username', $csv_username)->exists();
+            if ($exists || empty($csv_nama) || empty($csv_email) || empty($csv_username)) {
                 $skipCount++;
                 continue; 
             }
 
-            // Cek apakah Role yang ditulis di CSV valid terdaftar di sistem Spatie
             $roleExists = Role::where('name', $csv_role)->exists();
             if (!$roleExists) {
                 $skipCount++;
@@ -224,8 +226,10 @@ class ManageUser extends Component
             // Eksekusi Pembuatan User
             $newUser = User::create([
                 'name' => $csv_nama,
+                'username' => $csv_username, // 🟢 TAMBAHAN
                 'email' => $csv_email,
                 'password' => bcrypt($csv_password),
+                'program_studi' => $csv_prodi, // 🟢 TAMBAHAN
             ]);
 
             $newUser->assignRole($csv_role);

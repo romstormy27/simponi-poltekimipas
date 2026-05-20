@@ -114,6 +114,14 @@
                     </div>
 
                     <div class="space-y-2 text-xs">
+
+                        <p class="font-bold text-gray-700 dark:text-gray-300 text-[11px] border-l-2 border-orange-500 pl-1 uppercase mt-3">Pejabat Pengesah (Kaprodi)</p>
+                        <div class="space-y-1.5 bg-orange-50 dark:bg-orange-950/20 p-2 rounded border border-orange-200 dark:border-orange-900 font-mono text-[11px]">
+                            <div><strong class="text-orange-700 dark:text-orange-400">[NAMA_KAPRODI]</strong> <span class="text-gray-400 text-[10px] block">Nama lengkap Kaprodi pembina prodi dosen</span></div>
+                            <div class="mt-1"><strong class="text-orange-700 dark:text-orange-400">[NIP_KAPRODI]</strong> <span class="text-gray-400 text-[10px] block">NIP resmi Kaprodi terkait</span></div>
+                            <div class="mt-1"><strong class="text-orange-700 dark:text-orange-400">[JABATAN_KAPRODI]</strong> <span class="text-gray-400 text-[10px] block">Contoh: Ketua Program Studi Hukum Keimigrasian</span></div>
+                        </div>
+
                         <p class="font-bold text-gray-700 dark:text-gray-300 text-[11px] border-l-2 border-gray-400 pl-1 uppercase">Nomor Administrasi TU</p>
                         <div class="bg-white dark:bg-gray-800 p-2 rounded border border-gray-200 dark:border-gray-700 font-mono text-[11px]">
                             <span class="text-indigo-600 dark:text-indigo-300 font-bold">[NOMOR_SURAT]</span><br>

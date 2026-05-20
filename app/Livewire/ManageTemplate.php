@@ -160,9 +160,9 @@ class ManageTemplate extends Component
 <p>Bersamaan dengan surat ini, saya yang bertanda tangan di bawah ini:</p>
 
 <table style="width: 100%; margin: 10px 0; margin-left: 20px;">
-    <tr><td style="width: 150px;">Nama</td><td>: Wilonotomo, S.Kom., M.Si.</td></tr>
-    <tr><td>NIP</td><td>: 19912272024041001</td></tr>
-    <tr><td>Jabatan</td><td>: Ketua Program Studi</td></tr>
+    <tr><td style="width: 150px;">Nama</td><td>: [NAMA_KAPRODI]</td></tr>
+    <tr><td>NIP</td><td>: [NIP_KAPRODI]</td></tr>
+    <tr><td>Jabatan</td><td>: [JABATAN_KAPRODI]</td></tr>
 </table>
 
 <p>Menugaskan kepada dosen (daftar nama terlampir)</p>
@@ -183,9 +183,9 @@ class ManageTemplate extends Component
         </td>
         <td style="width: 40%; text-align: left;">
             Tangerang, [TANGGAL_SEKARANG]<br>
-            Ketua Program Studi,<br><br>ttd.<br><br>
-            <strong>Wilonotomo, S.Kom., M.Si.</strong><br>
-            NIP 19912272024041001
+            [JABATAN_KAPRODI],<br><br><br><br>
+            <strong>[NAMA_KAPRODI]</strong><br>
+            NIP [NIP_KAPRODI]
         </td>
     </tr>
 </table>
@@ -212,9 +212,9 @@ class ManageTemplate extends Component
 <p>Yang bertanda tangan di bawah ini:</p>
 
 <table style="width: 100%; margin: 10px 0; margin-left: 20px;">
-    <tr><td style="width: 150px;">Nama</td><td>: Wilonotomo, S.Kom., M.Si.</td></tr>
-    <tr><td>NIP</td><td>: 19912272024041001</td></tr>
-    <tr><td>Jabatan</td><td>: Ketua Program Studi</td></tr>
+    <tr><td style="width: 150px;">Nama</td><td>: [NAMA_KAPRODI]</td></tr>
+    <tr><td>NIP</td><td>: [NIP_KAPRODI]</td></tr>
+    <tr><td>Jabatan</td><td>: [JABATAN_KAPRODI]</td></tr>
 </table>
 
 <p>Memberikan izin kepada dosen (daftar nama terlampir) untuk:</p>
@@ -234,9 +234,9 @@ class ManageTemplate extends Component
         </td>
         <td style="width: 40%; text-align: left;">
             Tangerang, [TANGGAL_SEKARANG]<br>
-            Ketua Program Studi,<br><br>ttd.<br><br>
-            <strong>Wilonotomo, S.Kom., M.Si.</strong><br>
-            NIP 19912272024041001
+            [JABATAN_KAPRODI],<br><br><br><br>
+            <strong>[NAMA_KAPRODI]</strong><br>
+            NIP [NIP_KAPRODI]
         </td>
     </tr>
 </table>

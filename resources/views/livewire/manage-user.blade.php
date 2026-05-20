@@ -169,9 +169,9 @@
             
             <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-lg text-[11px] font-mono text-gray-600 dark:text-gray-400 mb-4 border border-gray-200 dark:border-gray-700">
                 <p class="font-bold text-gray-800 dark:text-white mb-1">Format Kolom Wajib:</p>
-                nama,email,role,password<br>
-                Budi Gunawan,budi@poltekimipas.ac.id,Dosen Program Studi,password123<br>
-                Siti Aminah,siti@poltekimipas.ac.id,Ketua Program Studi,password456
+                nama,username,email,role,password,program_studi<br>
+                Budi Gunawan,1999122701,budi@poltekimipas.ac.id,Dosen Program Studi,password123,Hukum Keimigrasian<br>
+                Siti Aminah,1995111502,siti@poltekimipas.ac.id,Ketua Program Studi,password456,Manajemen Teknologi Keimigrasian
             </div>
 
             <div class="space-y-2">

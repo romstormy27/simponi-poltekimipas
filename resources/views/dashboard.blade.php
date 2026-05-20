@@ -111,13 +111,26 @@
 
             @role('Ketua Program Studi')
             @php
-                // Logika Pengambilan Data Kaprodi
-                $kaprodiPending = \App\Models\Activity::where('status', 'pending_kaprodi')->count();
-                $kaprodiBatal = \App\Models\Activity::where('status', 'pending_cancellation')->count();
-                $kaprodiAktif = \App\Models\Activity::where('status', 'active')->count();
-                $kaprodiTotalAcc = \App\Models\Activity::whereIn('status', ['pending_tu', 'active', 'pending_final_approval', 'completed'])->count();
-            @endphp
+                // Logika Pengambilan Data Kaprodi (SEKARANG SUDAH DIFILTER BERDASARKAN PRODI)
+                $prodiKaprodi = auth()->user()->program_studi;
 
+                $kaprodiPending = \App\Models\Activity::whereHas('user', function ($query) use ($prodiKaprodi) {
+                    $query->where('program_studi', $prodiKaprodi);
+                })->where('status', 'pending_kaprodi')->count();
+
+                $kaprodiBatal = \App\Models\Activity::whereHas('user', function ($query) use ($prodiKaprodi) {
+                    $query->where('program_studi', $prodiKaprodi);
+                })->where('status', 'pending_cancellation')->count();
+
+                $kaprodiAktif = \App\Models\Activity::whereHas('user', function ($query) use ($prodiKaprodi) {
+                    $query->where('program_studi', $prodiKaprodi);
+                })->where('status', 'active')->count();
+
+                $kaprodiTotalAcc = \App\Models\Activity::whereHas('user', function ($query) use ($prodiKaprodi) {
+                    $query->where('program_studi', $prodiKaprodi);
+                })->whereIn('status', ['pending_tu', 'active', 'pending_final_approval', 'completed'])->count();
+            @endphp
+            
             <div class="mb-8">
                 <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Ringkasan Kinerja Program Studi</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

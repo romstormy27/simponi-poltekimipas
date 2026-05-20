@@ -50,6 +50,18 @@ class DocumentController extends Controller
             $daftarAnggota = '<span style="font-style: italic;">Tidak ada anggota (Kegiatan Mandiri)</span>';
         }
 
+        // 5. CARI DATA KAPRODI SECARA DINAMIS BERDASARKAN PRODI DOSEN PENGUSUL
+        $prodiDosen = $activity->user->program_studi;
+        
+        $kaprodi = \App\Models\User::role('Ketua Program Studi')
+            ->where('program_studi', $prodiDosen)
+            ->first();
+
+        // Antisipasi jika data Kaprodi di prodi tersebut belum di-seed/dibuat
+        $namaKaprodi = $kaprodi ? $kaprodi->name : '.......................................';
+        $nipKaprodi = $kaprodi ? $kaprodi->username : '.......................................';
+        $jabatanKaprodi = $prodiDosen ? 'Ketua Program Studi ' . $prodiDosen : 'Ketua Program Studi';
+
         // 5. Buat QR Code Verifikasi Digital (Disisipkan sebagai gambar Base64)
         $verifyUrl = route('dokumen.verifikasi', ['id' => $activity->id, 'type' => $type]);
         $qrCodeSvg = QrCode::format('svg')->size(100)->generate($verifyUrl);
@@ -85,6 +97,9 @@ class DocumentController extends Controller
             '[TABEL_ANGGOTA]' => $daftarAnggota,
             '[NAMA_DOSEN_ANGGOTA]' => $daftarAnggota,
             '[QR_CODE]' => $qrImg,
+            '[NAMA_KAPRODI]' => $namaKaprodi,
+            '[NIP_KAPRODI]' => $nipKaprodi,
+            '[JABATAN_KAPRODI]' => $jabatanKaprodi,
         ];
 
         // Ganti semua placeholder di dalam konten HTML template
