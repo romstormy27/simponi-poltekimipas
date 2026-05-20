@@ -10,6 +10,8 @@ new class extends Component
 {
     public string $name = '';
     public string $email = '';
+    public string $username = ''; // 🟢 Tambahan
+    public string $program_studi = ''; // 🟢 Tambahan
 
     /**
      * Mount the component.
@@ -18,6 +20,8 @@ new class extends Component
     {
         $this->name = Auth::user()->name;
         $this->email = Auth::user()->email;
+        $this->username = Auth::user()->username ?? ''; // 🟢 Tambahan
+        $this->program_studi = Auth::user()->program_studi ?? ''; // 🟢 Tambahan
     }
 
     /**
@@ -30,6 +34,8 @@ new class extends Component
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($user->id)],
+            'username' => ['required', 'string', 'max:255', Rule::unique(User::class)->ignore($user->id)], // 🟢 Tambahan
+            // program_studi tidak divalidasi dari sini karena Dosen tidak boleh ganti prodi sendiri, tapi biarkan aman
         ]);
 
         $user->fill($validated);
@@ -102,6 +108,18 @@ new class extends Component
                     @endif
                 </div>
             @endif
+        </div>
+
+        <div>
+            <x-input-label for="username" :value="__('Username / NIP')" />
+            <x-text-input wire:model="username" id="username" name="username" type="text" class="mt-1 block w-full" required />
+            <x-input-error class="mt-2" :messages="$errors->get('username')" />
+        </div>
+
+        <div>
+            <x-input-label for="program_studi" :value="__('Program Studi')" />
+            <x-text-input wire:model="program_studi" id="program_studi" name="program_studi" type="text" class="mt-1 block w-full bg-gray-100 dark:bg-gray-800 cursor-not-allowed" readonly />
+            <p class="text-xs text-gray-500 mt-1">Hubungi Super Admin jika terdapat kesalahan Program Studi.</p>
         </div>
 
         <div class="flex items-center gap-4">

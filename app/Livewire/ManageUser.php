@@ -13,7 +13,7 @@ class ManageUser extends Component
     use WithFileUploads;
 
     // Properti Form Single CRUD
-    public $userId, $name, $email, $password, $roleSelected;
+    public $userId, $name, $email, $username, $program_studi, $password, $roleSelected;
     public $isOpen = false;
     public $isEdit = false;
 
@@ -31,6 +31,8 @@ class ManageUser extends Component
         return [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $this->userId,
+            'username' => 'required|string|max:255|unique:users,username,' . $this->userId, // 🟢
+            'program_studi' => 'nullable|string|max:255', // 🟢
             'roleSelected' => 'required',
             'password' => $this->isEdit ? 'nullable|min:6' : 'required|min:6',
         ];
@@ -41,14 +43,20 @@ class ManageUser extends Component
     public function tutupModal() {
         $this->isOpen = false;
         $this->isEdit = false;
-        $this->reset(['userId', 'name', 'email', 'password', 'roleSelected']);
+        $this->reset(['userId', 'name', 'email', 'username', 'program_studi', 'password', 'roleSelected']);
     }
     public function tambahUser() { $this->tutupModal(); $this->bukaModal(); }
     
     public function simpanUser()
     {
         $this->validate();
-        $data = ['name' => $this->name, 'email' => $this->email];
+        $data = [
+            'name' => $this->name, 
+            'email' => $this->email,
+            'username' => $this->username, // 🟢
+            'program_studi' => $this->program_studi // 🟢
+        ];
+        
         if ($this->password) $data['password'] = bcrypt($this->password);
 
         if ($this->isEdit) {
@@ -71,6 +79,8 @@ class ManageUser extends Component
         $this->userId = $user->id;
         $this->name = $user->name;
         $this->email = $user->email;
+        $this->username = $user->username; // 🟢
+        $this->program_studi = $user->program_studi; // 🟢
         $this->roleSelected = $user->getRoleNames()->first();
         $this->bukaModal();
 

@@ -30,8 +30,8 @@
                     <th class="w-12 px-6 py-3 text-left">
                         <input type="checkbox" wire:model.live="selectAll" class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
                     </th>
-                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Nama Lengkap</th>
-                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Email Sistem</th>
+                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Identitas Pengguna</th>
+                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Kontak & Prodi</th>
                     <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Hak Akses (Role)</th>
                     <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Aksi Kontrol</th>
                 </tr>
@@ -46,8 +46,16 @@
                                 <span class="text-gray-300 dark:text-gray-600 text-xs font-medium">Anda</span>
                             @endif
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900 dark:text-white">{{ $user->name }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ $user->email }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-bold text-gray-900 dark:text-white">{{ $user->name }}</div>
+                            <div class="text-[11px] text-gray-500 font-mono mt-0.5">NIP: {{ $user->username ?? '-' }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-500 dark:text-gray-400">{{ $user->email }}</div>
+                            @if($user->program_studi)
+                                <div class="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 mt-0.5">{{ $user->program_studi }}</div>
+                            @endif
+                        </td>
                         <td class="px-6 py-4 whitespace-nowrap text-center">
                             <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300 border border-blue-100 dark:border-blue-900">
                                 {{ $user->getRoleNames()->first() ?? 'Tidak ada Role' }}
@@ -111,6 +119,24 @@
                     <input type="email" wire:model="email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-900 dark:text-white text-sm">
                     @error('email') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                 </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase">Username / NIP</label>
+                    <input type="text" wire:model="username" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-900 dark:text-white text-sm" placeholder="Contoh: 199912272024041002">
+                    @error('username') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase">Program Studi <span class="text-[10px] text-gray-400 normal-case">(Opsional)</span></label>
+                    <select wire:model="program_studi" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-900 dark:text-white text-sm">
+                        <option value="">-- Bukan Orang Prodi (Admin/TU) --</option>
+                        <option value="Manajemen Teknologi Keimigrasian">Manajemen Teknologi Keimigrasian</option>
+                        <option value="Hukum Keimigrasian">Hukum Keimigrasian</option>
+                        <option value="Administrasi Keimigrasian">Administrasi Keimigrasian</option>
+                    </select>
+                    @error('program_studi') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                </div>
+
                 <div>
                     <label class="block text-xs font-bold text-gray-500 uppercase">Hak Akses Mandat (Role)</label>
                     <select wire:model="roleSelected" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-900 dark:text-white text-sm">
