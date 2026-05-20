@@ -61,7 +61,10 @@ class FormRevisiKegiatan extends Component
         session()->flash('sukses', 'Revisi berhasil dikirim kembali ke Kaprodi.');
 
         // Kirim Notifikasi ke Kaprodi bahwa revisi sudah selesai
-        $kaprodiUsers = \App\Models\User::role('Ketua Program Studi')->get();
+        $kaprodiUsers = \App\Models\User::role('Ketua Program Studi')
+            ->where('program_studi', auth()->user()->program_studi)
+            ->get();
+            
         foreach ($kaprodiUsers as $kaprodi) {
             $kaprodi->notify(new \App\Notifications\SistemNotifikasi(
                 'Revisi Dikembalikan 🔄',

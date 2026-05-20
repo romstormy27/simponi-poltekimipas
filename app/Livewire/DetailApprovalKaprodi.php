@@ -53,6 +53,12 @@ class DetailApprovalKaprodi extends Component
         $this->validate(['alasan_penolakan' => 'required|min:10']);
         $this->kegiatan->update(['status' => 'perlu_revisi', 'rejection_note' => $this->alasan_penolakan]);
         ActivityHistory::create(['activity_id' => $this->kegiatan->id, 'status' => 'Dikembalikan (Revisi)', 'description' => 'Kaprodi meminta revisi melalui peninjauan detail: ' . $this->alasan_penolakan]);
+
+        $this->kegiatan->user->notify(new \App\Notifications\SistemNotifikasi(
+            'Pengajuan Perlu Revisi ⚠️',
+            'Kaprodi mengembalikan pengajuan Anda: "' . $this->kegiatan->title . '" dengan catatan revisi.',
+            route('pengajuan.riwayat')
+        ));
         
         session()->flash('error', 'Kegiatan dikembalikan ke dosen.');
 
